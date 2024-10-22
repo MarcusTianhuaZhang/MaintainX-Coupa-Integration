@@ -1,0 +1,1 @@
+Receive Purchase Order Change Webhook (MaintainX) | |--> Identify Changed Fields (e.g., address, items, costs, status) | |--> Sync Changed Fields: - Update Address (if changed) - Update Order Lines (if changed) - Update Attachments (if changed) - Update PO Properties (status, costs, etc.) | |--> Return Success/Failure

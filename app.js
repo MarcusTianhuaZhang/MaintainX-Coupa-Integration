@@ -4,7 +4,7 @@ const {
   handlePurchaseOrderWebhook,
   handlePurchaseOrderChangeWebhook,
   handlePurchaseOrderStatusChangeWebhook,
-} = require('./services/maintainx');
+} = require('./controllers/maintainx');
 const config = require('./config/config');
 
 const app = express();
@@ -17,11 +17,10 @@ app.post('/api/purchase-order', handlePurchaseOrderWebhook);
 app.post('/api/purchase-order-change', handlePurchaseOrderChangeWebhook);
 
 // Webhook route for Purchase Order Status Change
-app.post('/api/purchase-order-status-change', handlePurchaseOrderStatusChangeWebhook);
+app.post('/api/purchase-order-status-change', handlePurchaseOrderChangeWebhook);
 
 // Start the server
 const port = 80; 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
- 

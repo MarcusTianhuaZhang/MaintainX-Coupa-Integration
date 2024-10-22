@@ -2,20 +2,30 @@ const crypto = require('crypto');
 const config = require('../config/config');
 
 // Validate the MaintainX webhook signature
-function validateWebhookSignature(headers, body, fullUri) {
+function validateWebhookSignature(headers, body, fullUri, webhookType) {
+  // Choose the correct webhook secret based on the webhook type
+  let secret;
+  if (webhookType === 'create') {
+    secret = config.maintainx.webhookSecret_create;
+  } else if (webhookType === 'change') {
+    secret = config.maintainx.webhookSecret_change;
+  } else {
+    throw new Error('Invalid webhook type. Must be "create" or "change".');
+  }
+
   // Validate the body signature
   const bodySignature = headers['x-maintainx-webhook-body-signature'];
-  const isValidBodySignature = validateSignature(bodySignature, body, config.maintainx.webhookSecret);
+  const isValidBodySignature = validateSignature(bodySignature, body, secret);
 
   // Validate the URI signature
   const uriSignature = headers['x-maintainx-webhook-uri-signature'];
-  const isValidUriSignature = validateSignature(uriSignature, fullUri, config.maintainx.webhookSecret);
+  const isValidUriSignature = validateSignature(uriSignature, fullUri, secret);
 
   // Both signatures must be valid
   return isValidBodySignature && isValidUriSignature;
 }
 
-// Helper function to validate signature for both body and URI
+// Helper function to validate the signature for both body and URI
 function validateSignature(signatureHeader, data, secret) {
   if (!signatureHeader) {
     return false; // Signature header is missing
