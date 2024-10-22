@@ -1,23 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const {
-  handlePurchaseOrderWebhook,
-  handlePurchaseOrderChangeWebhook,
-  handlePurchaseOrderStatusChangeWebhook,
-} = require('./controllers/maintainx');
+  purchaseOrderCreationWebhookController,
+  purchaseOrderChangeWebhookController,
+} = require('./controllers/maintainxController');
 const config = require('./config/config');
 
 const app = express();
 app.use(bodyParser.json());
 
 // Webhook route for Purchase Order creation
-app.post('/api/purchase-order', handlePurchaseOrderWebhook);
+app.post('/api/purchase-order', purchaseOrderCreationWebhookController);
 
 // Webhook route for Purchase Order Change
-app.post('/api/purchase-order-change', handlePurchaseOrderChangeWebhook);
+app.post('/api/purchase-order-change', purchaseOrderChangeWebhookController);
 
 // Webhook route for Purchase Order Status Change
-app.post('/api/purchase-order-status-change', handlePurchaseOrderChangeWebhook);
+app.post('/api/purchase-order-status-change', purchaseOrderChangeWebhookController);
 
 // Start the server
 const port = 80; 

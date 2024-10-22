@@ -10,7 +10,7 @@ const {
 
 const {
   mapMaintainXToCoupaOrderLines,
-  mapMaintainXToCoupaPO,
+  mapMaintainXToCoupa,
   mapMaintainXToCoupaPOChange,
   mapMaintainXToCoupaAddress
 } = require('../utils/mapper');
@@ -18,7 +18,7 @@ const {
 const { validateWebhookSignature } = require('../utils/validator'); 
 
 
-async function handlePurchaseOrderWebhook(req, res) {
+async function purchaseOrderCreationWebhookController(req, res) {
   
   const isValid = validateWebhookSignature(req.headers, req.body, `${req.protocol}://${req.get('host')}${req.originalUrl}`, 'create');
   if (!isValid) return res.status(400).send('Invalid webhook signature');
@@ -44,7 +44,7 @@ async function handlePurchaseOrderWebhook(req, res) {
     const orderLineIds = createdOrderLines.map(line => line.id);
 
     // Step 3: Map and create the Purchase Order in Coupa with the created order line IDs and address ID
-    const coupaPOData = mapMaintainXToCoupaPO(maintainXData, orderLineIds, addressId);
+    const coupaPOData = mapMaintainXToCoupa(maintainXData, orderLineIds, addressId);
     const poId = await createCoupaPurchaseOrder(coupaPOData, orderLineIds, addressId);
 
     // Step 4: Handle attachments if any
@@ -60,7 +60,7 @@ async function handlePurchaseOrderWebhook(req, res) {
 
 
 // Handle Purchase Order Change Webhook
-async function handlePurchaseOrderChangeWebhook(req, res) {
+async function purchaseOrderChangeWebhookController(req, res) {
   
   const isValid = validateWebhookSignature(req.headers, req.body, `${req.protocol}://${req.get('host')}${req.originalUrl}`, 'change');
   if (!isValid) return res.status(400).send('Invalid webhook signature');
@@ -98,6 +98,6 @@ async function handlePurchaseOrderChangeWebhook(req, res) {
 }
 
 module.exports = {
-  handlePurchaseOrderWebhook,
-  handlePurchaseOrderChangeWebhook
+  purchaseOrderCreationWebhookController,
+  purchaseOrderChangeWebhookController
 };
